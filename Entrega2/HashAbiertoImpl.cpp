@@ -204,7 +204,24 @@ template <class K, class V>
 Iterador<Tupla<K, V>> HashAbiertoImpl<K, V>::ObtenerIterador(const K& c)
 {
 	const nat cubeta = GetCubeta(c);
-	return table[cubeta]->ObtenerIterador();
+	int aux = 0;
+	Array<Tupla<K, V>> arrayIter = Array<Tupla<K, V>>(this->largo);
+	Puntero<Tupla<K, Puntero<Lista<V>>>> lista = table[cubeta];
+
+	// El actual no puede ser nulo
+	if (lista != nullptr) {
+		K clave = lista->Dato1;
+		Iterador<V> iterLista = lista->Dato2->ObtenerIterador();
+
+		while (iterLista.HayElemento()) {
+			Tupla<K, V> tupla(clave, iterLista.ElementoActual());
+			arrayIter[aux] = tupla;
+			aux++;
+			iterLista.Avanzar();
+		}
+	}
+
+	return arrayIter.ObtenerIterador();
 }
 
 //template <class K, class V>

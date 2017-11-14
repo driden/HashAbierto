@@ -93,49 +93,49 @@ Sistema::Sistema(const Cadena& nombreArchivoDiccionario)
 	hash = new HashAbiertoImpl<Cadena, Cadena>(new CadenaHash(), 85000, Comparador<Cadena>::Default);
 
 	// Vueltas para manejar que el input sea una Cadena
-	//string nombre = "";
-	//for (nat i = 0; i < nombreArchivoDiccionario.Largo; i++)
-	//	nombre += nombreArchivoDiccionario[i];
+	string nombre = "";
+	for (nat i = 0; i < nombreArchivoDiccionario.Largo; i++)
+		nombre += nombreArchivoDiccionario[i];
 
-	////leer el archivo y llenar el hash
-	//string line;
-	//ifstream miarchivo(nombre);
-	//Comparador<Cadena> comp = Comparador<Cadena>::Default;
-	//if (miarchivo.is_open()) {
+	//leer el archivo y llenar el hash
+	string line;
+	ifstream miarchivo(nombre);
+	Comparador<Cadena> comp = Comparador<Cadena>::Default;
+	if (miarchivo.is_open()) {
 
-	//	while (getline(miarchivo, line)) {
+		while (getline(miarchivo, line)) {
 
-	//		std::transform(line.begin(), line.end(), line.begin(), ::tolower);
+			std::transform(line.begin(), line.end(), line.begin(), ::tolower);
 
-	//		Cadena original(line.c_str());
+			Cadena original(line.c_str());
 
-	//		if (TieneCaracteresEspeciales(original))
-	//			continue;
-	//		Cadena ordenada = OrdenarCadena(original);
+			if (TieneCaracteresEspeciales(original))
+				continue;
+			Cadena ordenada = OrdenarCadena(original);
 
-	//		if (hash->EstaDefinida(ordenada))
-	//		{
-	//			Iterador<Tupla<Cadena, Cadena>> iter = hash->ObtenerIterador(ordenada);
-	//			bool doble = false;
-	//			while (iter.HayElemento()) {
-	//				// Pära que no se duplique
-	//				if (comp.SonIguales(iter.ElementoActual().Dato2, original))
-	//				{						
-	//					doble = true; 
-	//					break;												
-	//				}
+			if (hash->EstaDefinida(ordenada))
+			{
+				Iterador<Tupla<Cadena, Cadena>> iter = hash->ObtenerIterador(ordenada);
+				bool doble = false;
+				while (iter.HayElemento()) {
+					// Pära que no se duplique
+					if (comp.SonIguales(iter.ElementoActual().Dato2, original))
+					{						
+						doble = true; 
+						break;												
+					}
 
-	//				iter.Avanzar();
-	//			}
-	//			if (!doble) hash->Agregar(ordenada, original);
-	//		}else
-	//		{
-	//			hash->Agregar(ordenada, original);
-	//		}			
-	//	}
+					iter.Avanzar();
+				}
+				if (!doble) hash->Agregar(ordenada, original);
+			}else
+			{
+				hash->Agregar(ordenada, original);
+			}			
+		}
 
-	//	miarchivo.close();
-	//}
+		miarchivo.close();
+	}
 }
 
 Sistema::~Sistema()
