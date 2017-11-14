@@ -20,8 +20,8 @@ Cadena CasoDePrueba::GetNombre()const
 void CasoDePrueba::CorrerPruebaConcreta()
 {
 	PruebaTablas();
-	PruebaAnagramas();
-	PruebaEsAVL();
+	//PruebaAnagramas();
+	//PruebaEsAVL();
 }
 
 void CasoDePrueba::Verificar(TipoRetorno obtenido, TipoRetorno esperado, Cadena comentario)
@@ -223,7 +223,7 @@ void CasoDePrueba::PruebaTablas()
 
 	nat cubetas = 10;
 	PruebaTabla(interfaz->CrearTablaHashAbierto<Cadena, Cadena>(cubetas, new CadenaFuncionHash(), Comparador<Cadena>::Default), "Prueba Tabla Hash Abierto");
-	PruebaTabla(interfaz->CrearTablaHashCerrado<Cadena, Cadena>(cubetas, new CadenaFuncionHash(), Comparador<Cadena>::Default), "Prueba Tabla Hash Cerrado");
+	//PruebaTabla(interfaz->CrearTablaHashCerrado<Cadena, Cadena>(cubetas, new CadenaFuncionHash(), Comparador<Cadena>::Default), "Prueba Tabla Hash Cerrado");
 
 	CerrarSeccion();
 }

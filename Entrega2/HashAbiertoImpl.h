@@ -1,24 +1,28 @@
 #pragma once
 
 #include "Tabla.h"
-#include "ListaEncadenadaImp.h"
 #include "Array.h"
 #include "FuncionHash.h"
+#include "Lista.h"
 
 template <class K, class V>
 class HashAbiertoImpl : public Tabla<K, V>
 {
 private:
-	Array<Puntero<ListaOrd<Tupla<K, V>>>> table;
+	Array<Puntero<Tupla<K, Puntero<Lista<V>>>>> table;
+	//Array<Puntero<ListaOrd<Tupla<K, V>>>> table;
 	Puntero<FuncionHash<K>> func;
 	nat tope, cubetasOcupadas, largo;
-	Comparador<K> comparador;
+	Comparador<K> compClave;
+	Comparador<V> compValor;
 	Comparador<Tupla<K, V>> compTupla;
 
 	const nat siguiente_primo(const nat num);
+	V obtenido;
 
 public:
 	HashAbiertoImpl(Puntero<FuncionHash<K>>, nat cantidadRegistros, Comparador<K> comp);
+	int GetCubeta(const K& c) const;	
 	~HashAbiertoImpl() {}
 
 	/* CONSTRUCTORAS */
@@ -72,15 +76,15 @@ public:
 
 	// PRE: La tabla esta definida en (x,y)
 	// POS: retorna una copia de la clave y el valor en (x,y)
-	const Tupla<K, V>& Get(const Tupla<nat,nat> posicion) const;
+	//const Tupla<K, V>& Get(const Tupla<nat,nat> posicion) const;
 
 	// PRE: -
 	// POS: - retorna true si hay una tupla en la coordenada dada
-	bool CanGet(const Tupla<nat, nat> posicion) const;
+	//bool CanGet(const Tupla<nat, nat> posicion) const;
 
 	// PRE: -
 	// POS: - Devuelve una lista ordenada con los numeros de las cubetas ocupadas
-	Puntero<ListaOrd<nat>> CubetasOcupadas() const;
+	//Puntero<ListaOrd<nat>> CubetasOcupadas() const;
 };
 
 #include "HashAbiertoImpl.cpp"

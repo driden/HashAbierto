@@ -9,8 +9,8 @@ private:
 	Tupla<nat, nat> posicion;
 	const HashAbiertoImpl<K, V> &hashAbierto;
 
-	Puntero<ListaOrd<nat>> cubetas;
-	Puntero<ListaOrd<nat>> principio;
+	Puntero<Lista<nat>> cubetas;
+	Puntero<Lista<nat>> principio;
 	Iterador<nat> iteradorCubeta;
 	
 public:

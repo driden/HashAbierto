@@ -102,6 +102,7 @@
     <ClCompile Include="HashAbiertoImpl.cpp" />
     <ClCompile Include="HashCerradoImpl.cpp" />
     <ClCompile Include="HashCerradoIteracion.cpp" />
+    <ClCompile Include="ListaEncadenada.cpp" />
     <ClCompile Include="ListaEncadenadaImp.cpp" />
     <ClCompile Include="ListaEncadenadaIteracion.cpp" />
     <ClCompile Include="main.cpp" />
@@ -116,9 +117,12 @@
     <ClInclude Include="HashAbiertoImpl.h" />
     <ClInclude Include="HashCerradoImpl.h" />
     <ClInclude Include="HashCerradoIteracion.h" />
+    <ClInclude Include="Lista.h" />
+    <ClInclude Include="ListaEncadenada.h" />
     <ClInclude Include="ListaEncadenadaImp.h" />
     <ClInclude Include="ListaEncadenadaIteracion.h" />
     <ClInclude Include="ListaOrd.h" />
+    <ClInclude Include="Nodo.h" />
     <ClInclude Include="NodoArbol.h" />
     <ClInclude Include="NodoLista.h" />
     <ClInclude Include="Sistema.h" />
