@@ -19,6 +19,7 @@ class Sistema
 private:
 	Puntero<HashAbiertoImpl<Cadena, Cadena>> hash;
 	Array<Cadena> anagramas;
+	
 public:
 	Sistema(const Cadena& nombreArchivoDiccionario);
 	~Sistema();

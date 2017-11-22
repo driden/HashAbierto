@@ -111,26 +111,7 @@ Sistema::Sistema(const Cadena& nombreArchivoDiccionario)
 			if (TieneCaracteresEspeciales(original))
 				continue;
 			Cadena ordenada = OrdenarCadena(original);
-
-			//if (hash->EstaDefinida(ordenada))
-			//{
-			//	Iterador<Tupla<Cadena, Cadena>> iter = hash->ObtenerIterador(ordenada);
-			//	bool doble = false;
-			//	while (iter.HayElemento()) {
-			//		// Pära que no se duplique
-			//		if (comp.SonIguales(iter.ElementoActual().Dato2, original))
-			//		{						
-			//			doble = true; 
-			//			break;												
-			//		}
-
-			//		iter.Avanzar();
-			//	}
-			//	if (!doble) hash->Agregar(ordenada, original);
-			//}else
-			//{
-			hash->Agregar(ordenada, original);
-			//}			
+			hash->Agregar(ordenada, original);			
 		}
 
 		miarchivo.close();

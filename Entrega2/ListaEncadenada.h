@@ -8,7 +8,7 @@ class ListaEncadenada: public Lista<T>
 {
 public:
 	~ListaEncadenada(){}
-	ListaEncadenada(const Comparador<T> &comparador);
+	ListaEncadenada(const Comparador<T> &comparador = Comparador<T>::Default);
 
 
 	// PRE: Está ordenada

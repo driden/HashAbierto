@@ -6,11 +6,12 @@
 #include <string>
 #include <cctype>
 
-
+Puntero<Sistema> pSist = nullptr;
 Puntero<Sistema> Inicializar()
 {
-	return new Sistema("diccionario.txt");
-
+	if (pSist == nullptr)
+		pSist = new Sistema("diccionario.txt");
+	return pSist;
 }
 
 void main()
