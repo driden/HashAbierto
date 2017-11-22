@@ -104,7 +104,6 @@ Sistema::Sistema(const Cadena& nombreArchivoDiccionario)
 	if (miarchivo.is_open()) {
 
 		while (getline(miarchivo, line)) {
-
 			std::transform(line.begin(), line.end(), line.begin(), ::tolower);
 
 			Cadena original(line.c_str());
@@ -113,29 +112,29 @@ Sistema::Sistema(const Cadena& nombreArchivoDiccionario)
 				continue;
 			Cadena ordenada = OrdenarCadena(original);
 
-			if (hash->EstaDefinida(ordenada))
-			{
-				Iterador<Tupla<Cadena, Cadena>> iter = hash->ObtenerIterador(ordenada);
-				bool doble = false;
-				while (iter.HayElemento()) {
-					// Pära que no se duplique
-					if (comp.SonIguales(iter.ElementoActual().Dato2, original))
-					{						
-						doble = true; 
-						break;												
-					}
+			//if (hash->EstaDefinida(ordenada))
+			//{
+			//	Iterador<Tupla<Cadena, Cadena>> iter = hash->ObtenerIterador(ordenada);
+			//	bool doble = false;
+			//	while (iter.HayElemento()) {
+			//		// Pära que no se duplique
+			//		if (comp.SonIguales(iter.ElementoActual().Dato2, original))
+			//		{						
+			//			doble = true; 
+			//			break;												
+			//		}
 
-					iter.Avanzar();
-				}
-				if (!doble) hash->Agregar(ordenada, original);
-			}else
-			{
-				hash->Agregar(ordenada, original);
-			}			
+			//		iter.Avanzar();
+			//	}
+			//	if (!doble) hash->Agregar(ordenada, original);
+			//}else
+			//{
+			hash->Agregar(ordenada, original);
+			//}			
 		}
 
 		miarchivo.close();
-	}
+	}	
 }
 
 Sistema::~Sistema()
@@ -167,10 +166,11 @@ Cadena ToLower(const Cadena &c)
 Array<Cadena> Sistema::Anagramas(const Cadena& c)
 {
 	Cadena minuscula = ToLower(c);
-	Cadena ordenada = OrdenarCadena(minuscula);
+	Cadena ordenada = OrdenarCadena(minuscula);	
 	Comparador<Cadena> comp = Comparador<Cadena>::Default;
+	assert(hash->EstaDefinida(ordenada));
 
-	Iterador<Tupla<Cadena, Cadena>> iter = hash->ObtenerIterador();
+	Iterador<Tupla<Cadena, Cadena>> iter = hash->ObtenerIterador(ordenada);
 
 	Puntero<ListaOrd<Cadena>> lista = new ListaEncadenadaImp<Cadena>(comp);
 

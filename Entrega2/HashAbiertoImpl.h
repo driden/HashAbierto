@@ -4,13 +4,18 @@
 #include "Array.h"
 #include "FuncionHash.h"
 #include "Lista.h"
+#include "NodoTabla.h"
 
 template <class K, class V>
 class HashAbiertoImpl : public Tabla<K, V>
 {
 private:
-	Array<Puntero<Tupla<K, Puntero<Lista<V>>>>> table;
-	//Array<Puntero<ListaOrd<Tupla<K, V>>>> table;
+	Array<Puntero<Lista<NodoTabla<K,V>>>> table;
+
+	// K0: 1->2
+	// K1: 3->4
+	// K2: 5->6->7->8
+
 	Puntero<FuncionHash<K>> func;
 	nat tope, cubetasOcupadas, largo;
 	Comparador<K> compClave;

@@ -47,8 +47,8 @@ HashAbiertoImpl<K, V>::HashAbiertoImpl(Puntero<FuncionHash<K>> f, nat cantidadRe
 {
 	func = f;
 	const nat scope = static_cast<int>(cantidadRegistros*1.7);
-	
-	table = Array<Puntero<Tupla<K, Puntero<Lista<V>>>>>(siguiente_primo(scope), nullptr);
+
+	table = Array<Puntero<Lista<NodoTabla<K, V>>>>(siguiente_primo(scope), nullptr);
 	compClave = comp;
 	compValor = Comparador<V>::Default;
 
@@ -70,28 +70,46 @@ void HashAbiertoImpl<K, V>::Agregar(const K& c, const V& v)
 	nat cubeta = GetCubeta(c);
 
 	float ocupacion = static_cast<float>(cubetasOcupadas) / table.Largo;
-
+	//re hashing
 	if (ocupacion > 0.7) // re-hashing
 	{
-		Array<Puntero<Tupla<K, Puntero<Lista<V>>>>> nuevaTable(static_cast<nat>(table.Largo*1.7));
-		Array<Puntero<Tupla<K, Puntero<Lista<V>>>>>::Copiar(table, nuevaTable, 0);
+		Array<Puntero<Lista<NodoTabla<K, V>>>> nuevaTable(static_cast<nat>(table.Largo*1.7));
+		Array<Puntero<Lista<NodoTabla<K, V>>>>::Copiar(table, nuevaTable, 0);
 		table = nuevaTable;
 	}
-
+	// Lista vacia si no hay nada en la cubeta
 	if (table[cubeta] == nullptr)
 	{
 		Puntero<Lista<V>> l = new ListaEncadenada<V>(compValor);
-		Puntero<Tupla<K, Puntero<Lista<V>>>> tupla =
-			new Tupla<K, Puntero<Lista<V>>>(c, l);
-		table[cubeta] = tupla;
-		cubetasOcupadas++;		
-	}
-	
+		NodoTabla<K, V> nodoT(c, l);
 
-	Puntero<Tupla<K, Puntero<Lista<V>>>> t = table[cubeta];
-	t->Dato2->Insertar(v);
-	
-	largo++;
+		Puntero<Lista<NodoTabla<K, V>>> lTabla = new ListaEncadenada<NodoTabla<K, V>>();
+		lTabla->Insertar(nodoT);
+		
+		table[cubeta] = lTabla;
+		cubetasOcupadas++;
+	}
+
+	Puntero<Lista<NodoTabla<K, V>>> listaClavesValores = table[cubeta];
+	Iterador<NodoTabla<K, V>> it = listaClavesValores->ObtenerIterador();
+	while (it.HayElemento())
+	{
+		NodoTabla<K, V> actual = it.ElementoActual();
+
+		if (compClave.SonIguales(actual.keyValues.Dato1, c))
+		{
+			Puntero<Lista<V>> pLista = actual.keyValues.Dato2;
+			pLista->Insertar(v);
+			largo++;
+			return;
+		}
+		it.Avanzar();
+	}
+
+	// Si la clave todavia noe sta en la lista de la cubeta
+	Puntero<Lista<V>> l = new ListaEncadenada<V>(compValor);
+	NodoTabla<K, V> nodoT(c, l);
+	listaClavesValores->Insertar(nodoT);
 }
 
 template <class K, class V>
@@ -99,14 +117,14 @@ void HashAbiertoImpl<K, V>::Borrar(const K& c)
 {
 	assert(EstaDefinida(c));
 	nat cubeta = GetCubeta(c);
-	Puntero<Tupla<K, Puntero<Lista<V>>>> t = table[cubeta];
+	Puntero<Lista<NodoTabla<K, V>>> lista = table[cubeta];
 	//Chequea que la clave a borrar sea la correcta
-	assert(compClave.SonIguales(t->Dato1, c));
-	
-	const nat largoCubeta = t->Dato2->Largo();		
+	assert(compClave.SonIguales(lista->Obtener(0).keyValues.Dato1, c));
+
+	const nat largoCubeta = lista->Largo();
 
 	table[cubeta] = nullptr;
-	largo-=largoCubeta;
+	largo -= largoCubeta;
 	cubetasOcupadas--;
 }
 
@@ -132,7 +150,21 @@ bool HashAbiertoImpl<K, V>::EstaDefinida(const K& c) const
 {
 	const nat cubeta = GetCubeta(c);
 
-	return table[cubeta] != nullptr;
+	Puntero<Lista<NodoTabla<K, V>>> lista = table[cubeta];
+
+	if (!lista) return false;
+
+	Iterador<NodoTabla<K, V>> it = lista->ObtenerIterador();
+	while (it.HayElemento())
+	{
+		NodoTabla<K, V> actual = it.ElementoActual();
+		if (compClave.SonIguales(actual.keyValues.Dato1, c))
+		{
+			return true;
+		}
+		it.Avanzar();
+	}
+	return false;
 }
 
 template <class K, class V>
@@ -141,12 +173,22 @@ const V& HashAbiertoImpl<K, V>::Obtener(const K& c) const
 	assert(EstaDefinida(c));
 
 	const nat cubeta = GetCubeta(c);
-	
-	Puntero<Tupla<K, Puntero<Lista<V>>>> t = table[cubeta];
-	Iterador<V> it = t->Dato2->ObtenerIterador();
 
-	V v = it.ElementoActual();
-	return *(new V(v));
+	Puntero<Lista<NodoTabla<K, V>>> t = table[cubeta];
+	Iterador<NodoTabla<K, V>> it = t->ObtenerIterador();
+
+	while (it.HayElemento())
+	{
+		NodoTabla<K, V> actual = it.ElementoActual();
+		if (compClave.SonIguales(actual.keyValues.Dato1, c))
+		{
+			Puntero<Lista<V>> pLista = actual.keyValues.Dato2;
+			return pLista->Obtener(0);
+		}
+		it.Avanzar();
+	}
+
+	return *(new V());
 }
 
 template <class K, class V>
@@ -178,24 +220,25 @@ Iterador<Tupla<K, V>> HashAbiertoImpl<K, V>::ObtenerIterador() const
 	int aux = 0;
 	Array<Tupla<K, V>> arrayIter = Array<Tupla<K, V>>(this->largo);
 	// Iterador de Array
-	Iterador<Puntero<Tupla<K,Puntero<Lista<V>>>>> it = this->table.ObtenerIterador();
+	// Array<Puntero<Lista<NodoTabla<K,V>>>>
+	Iterador<Puntero<Lista<NodoTabla<K, V>>>> it = this->table.ObtenerIterador();
 
 	while (it.HayElemento()) {
-		Puntero<Tupla<K, Puntero<Lista<V>>>> lista = it.ElementoActual();
-		
-		// El actual no puede ser nulo
-		if (lista != nullptr) {
-			K clave = lista->Dato1;
-			Iterador<V> iterLista = lista->Dato2->ObtenerIterador();
-
-			while (iterLista.HayElemento()) {
-				Tupla<K, V> tupla(clave, iterLista.ElementoActual());
-				arrayIter[aux] = tupla;
-				aux++;
-				iterLista.Avanzar();
-			}
-		}
+		Puntero<Lista<NodoTabla<K, V>>> lista = it.ElementoActual();
 		it.Avanzar();
+
+		if (!lista) continue;
+		NodoTabla<K, V> nodo = lista->Obtener(0);
+		K clave = nodo.Key();
+		Puntero<Lista<V>> listaV = nodo.Values();
+		Iterador<V> iterLista = nodo.Values()->ObtenerIterador();
+
+		while (iterLista.HayElemento()) {
+			Tupla<K, V> tupla(clave, iterLista.ElementoActual());
+			arrayIter[aux] = tupla;
+			aux++;
+			iterLista.Avanzar();
+		}
 	}
 	return arrayIter.ObtenerIterador();
 }
@@ -205,19 +248,29 @@ Iterador<Tupla<K, V>> HashAbiertoImpl<K, V>::ObtenerIterador(const K& c)
 {
 	const nat cubeta = GetCubeta(c);
 	int aux = 0;
-	Array<Tupla<K, V>> arrayIter = Array<Tupla<K, V>>(this->largo);
-	Puntero<Tupla<K, Puntero<Lista<V>>>> lista = table[cubeta];
+	Array<Tupla<K, V>> arrayIter; // = Array<Tupla<K, V>>(this->largo);
+	Puntero<Lista<NodoTabla<K, V>>> lista = table[cubeta];
 
 	// El actual no puede ser nulo
 	if (lista != nullptr) {
-		K clave = lista->Dato1;
-		Iterador<V> iterLista = lista->Dato2->ObtenerIterador();
+		Iterador<NodoTabla<K, V>> itValores = lista->ObtenerIterador();
 
-		while (iterLista.HayElemento()) {
-			Tupla<K, V> tupla(clave, iterLista.ElementoActual());
-			arrayIter[aux] = tupla;
-			aux++;
-			iterLista.Avanzar();
+		while (itValores.HayElemento())
+		{
+			NodoTabla<K, V> nodo = itValores.ElementoActual();
+			itValores.Avanzar();
+
+			if (compClave.SonIguales(c, nodo.keyValues.Dato1))
+			{
+				arrayIter = Array<Tupla<K, V>>(largo);
+				Iterador<V> itV = nodo.Values()->ObtenerIterador();
+				nat largo = 0;
+				while (itV.HayElemento())
+				{
+					arrayIter[largo++] = Tupla<K, V>(c, itV.ElementoActual());
+					itV.Avanzar();
+				}
+			}
 		}
 	}
 

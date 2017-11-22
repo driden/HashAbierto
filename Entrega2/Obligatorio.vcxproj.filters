@@ -68,6 +68,9 @@
     </ClCompile>
     <ClCompile Include="CadenaHash.cpp" />
     <ClCompile Include="ListaEncadenada.cpp" />
+    <ClCompile Include="NodoTablaComparacion.cpp">
+      <Filter>Implementacion</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CasoDePrueba.h">
@@ -111,6 +114,12 @@
     <ClInclude Include="ListaEncadenada.h" />
     <ClInclude Include="Nodo.h" />
     <ClInclude Include="Lista.h" />
+    <ClInclude Include="NodoTabla.h">
+      <Filter>Implementacion\Tads\Tabla\Hash abierto</Filter>
+    </ClInclude>
+    <ClInclude Include="NodoTablaComparacion.h">
+      <Filter>Implementacion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="diccionario" />

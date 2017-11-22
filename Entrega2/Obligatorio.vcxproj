@@ -106,6 +106,7 @@
     <ClCompile Include="ListaEncadenadaImp.cpp" />
     <ClCompile Include="ListaEncadenadaIteracion.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NodoTablaComparacion.cpp" />
     <ClCompile Include="Sistema.cpp" />
     <ClCompile Include="SistemaTemplates.cpp" />
     <ClCompile Include="TablaIteracion.cpp" />
@@ -125,6 +126,8 @@
     <ClInclude Include="Nodo.h" />
     <ClInclude Include="NodoArbol.h" />
     <ClInclude Include="NodoLista.h" />
+    <ClInclude Include="NodoTabla.h" />
+    <ClInclude Include="NodoTablaComparacion.h" />
     <ClInclude Include="Sistema.h" />
     <ClInclude Include="Tabla.h" />
     <ClInclude Include="TablaIteracion.h" />
